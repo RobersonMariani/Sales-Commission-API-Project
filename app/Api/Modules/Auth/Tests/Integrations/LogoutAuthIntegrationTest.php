@@ -6,11 +6,10 @@ namespace App\Api\Modules\Auth\Tests\Integrations;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
-/**
- * @group auth
- */
+#[Group('auth')]
 class LogoutAuthIntegrationTest extends TestCase
 {
     use RefreshDatabase;

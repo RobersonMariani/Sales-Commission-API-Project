@@ -12,11 +12,10 @@ use Closure;
 use Illuminate\Support\Facades\DB;
 use Mockery;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
-/**
- * @group seller
- */
+#[Group('seller')]
 class CreateSellerUseCaseTest extends TestCase
 {
     public function testExecuteShouldReturnSellerWhenDataIsValid(): void

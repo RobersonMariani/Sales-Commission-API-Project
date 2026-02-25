@@ -8,11 +8,10 @@ use App\Api\Modules\Auth\Tests\Assertables\UserAssertableJson;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
-/**
- * @group auth
- */
+#[Group('auth')]
 class MeAuthIntegrationTest extends TestCase
 {
     use RefreshDatabase;

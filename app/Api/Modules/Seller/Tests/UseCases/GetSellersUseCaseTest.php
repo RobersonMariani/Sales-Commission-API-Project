@@ -11,11 +11,10 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\LengthAwarePaginator as LengthAwarePaginatorImpl;
 use Mockery;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
-/**
- * @group seller
- */
+#[Group('seller')]
 class GetSellersUseCaseTest extends TestCase
 {
     public function testExecuteShouldReturnPaginatedSellers(): void

@@ -8,11 +8,11 @@ use App\Api\Modules\Auth\Data\RegisterData;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
-/**
- * @group auth
- */
+#[Group('auth')]
 class RegisterDataTest extends TestCase
 {
     use RefreshDatabase;
@@ -61,9 +61,7 @@ class RegisterDataTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validData
-     */
+    #[DataProvider('validData')]
     public function testValidDataValidation(array $validItem): void
     {
         // Arrange & Act
@@ -73,9 +71,7 @@ class RegisterDataTest extends TestCase
         $this->assertInstanceOf(RegisterData::class, $result);
     }
 
-    /**
-     * @dataProvider invalidData
-     */
+    #[DataProvider('invalidData')]
     public function testInvalidDataValidation(array $invalidItem, string $expectedField): void
     {
         // Arrange & Act & Assert

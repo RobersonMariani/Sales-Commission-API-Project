@@ -8,11 +8,11 @@ use App\Api\Modules\Sale\Data\CreateSaleData;
 use App\Models\Seller;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
-/**
- * @group sale
- */
+#[Group('sale')]
 class CreateSaleDataTest extends TestCase
 {
     use RefreshDatabase;
@@ -50,9 +50,7 @@ class CreateSaleDataTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validData
-     */
+    #[DataProvider('validData')]
     public function testValidDataValidation(array $validItem): void
     {
         // Arrange
@@ -66,9 +64,7 @@ class CreateSaleDataTest extends TestCase
         $this->assertInstanceOf(CreateSaleData::class, $result);
     }
 
-    /**
-     * @dataProvider invalidData
-     */
+    #[DataProvider('invalidData')]
     public function testInvalidDataValidation(array $invalidItem, string $expectedField): void
     {
         // Arrange

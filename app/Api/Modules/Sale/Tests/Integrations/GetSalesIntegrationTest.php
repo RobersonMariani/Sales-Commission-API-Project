@@ -10,11 +10,10 @@ use App\Models\Seller;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
-/**
- * @group sale
- */
+#[Group('sale')]
 class GetSalesIntegrationTest extends TestCase
 {
     use RefreshDatabase;

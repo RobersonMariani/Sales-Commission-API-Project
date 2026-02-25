@@ -6,14 +6,17 @@ namespace App\Api\Modules\Seller\Tests\Data;
 
 use App\Api\Modules\Seller\Data\CreateSellerData;
 use App\Models\Seller;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
-/**
- * @group seller
- */
+#[Group('seller')]
 class CreateSellerDataTest extends TestCase
 {
+    use RefreshDatabase;
+
     private static function validPayload(): array
     {
         return [
@@ -43,9 +46,7 @@ class CreateSellerDataTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validData
-     */
+    #[DataProvider('validData')]
     public function testValidDataValidation(array $validItem): void
     {
         // Arrange & Act
@@ -55,9 +56,7 @@ class CreateSellerDataTest extends TestCase
         $this->assertInstanceOf(CreateSellerData::class, $result);
     }
 
-    /**
-     * @dataProvider invalidData
-     */
+    #[DataProvider('invalidData')]
     public function testInvalidDataValidation(array $invalidItem, string $expectedField): void
     {
         // Arrange & Act & Assert

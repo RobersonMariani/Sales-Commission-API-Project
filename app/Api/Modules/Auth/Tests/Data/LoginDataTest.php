@@ -6,11 +6,11 @@ namespace App\Api\Modules\Auth\Tests\Data;
 
 use App\Api\Modules\Auth\Data\LoginData;
 use Illuminate\Validation\ValidationException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
-/**
- * @group auth
- */
+#[Group('auth')]
 class LoginDataTest extends TestCase
 {
     private static function validPayload(): array
@@ -39,9 +39,7 @@ class LoginDataTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validData
-     */
+    #[DataProvider('validData')]
     public function testValidDataValidation(array $validItem): void
     {
         // Arrange & Act
@@ -51,9 +49,7 @@ class LoginDataTest extends TestCase
         $this->assertInstanceOf(LoginData::class, $result);
     }
 
-    /**
-     * @dataProvider invalidData
-     */
+    #[DataProvider('invalidData')]
     public function testInvalidDataValidation(array $invalidItem, string $expectedField): void
     {
         // Arrange & Act & Assert

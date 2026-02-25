@@ -8,11 +8,10 @@ use App\Api\Modules\Seller\Tests\Assertables\SellerAssertableJson;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
-/**
- * @group seller
- */
+#[Group('seller')]
 class CreateSellerIntegrationTest extends TestCase
 {
     use RefreshDatabase;

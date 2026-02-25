@@ -7,11 +7,10 @@ namespace App\Api\Modules\Auth\Tests\Integrations;
 use App\Api\Modules\Auth\Tests\Assertables\UserAssertableJson;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
-/**
- * @group auth
- */
+#[Group('auth')]
 class RegisterAuthIntegrationTest extends TestCase
 {
     use RefreshDatabase;

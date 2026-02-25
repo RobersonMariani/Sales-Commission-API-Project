@@ -10,11 +10,10 @@ use App\Models\Sale;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Mockery;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
-/**
- * @group sale
- */
+#[Group('sale')]
 class GetSaleUseCaseTest extends TestCase
 {
     public function testExecuteShouldReturnSaleWhenFound(): void
