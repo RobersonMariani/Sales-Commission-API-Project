@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Seller\Tests\UseCases;
 
 use App\Api\Modules\Seller\Repositories\SellerRepository;
@@ -15,7 +17,7 @@ use Tests\TestCase;
  */
 class GetSellerUseCaseTest extends TestCase
 {
-    public function test_execute_should_return_seller_when_found(): void
+    public function testExecuteShouldReturnSellerWhenFound(): void
     {
         // Arrange
         $expectedSeller = new Seller(['id' => 1, 'name' => 'John Seller', 'email' => 'john@example.com']);
@@ -27,7 +29,7 @@ class GetSellerUseCaseTest extends TestCase
                     ->once()
                     ->with(1)
                     ->andReturn($expectedSeller);
-            })
+            }),
         );
 
         // Act
@@ -39,7 +41,7 @@ class GetSellerUseCaseTest extends TestCase
         $this->assertEquals($expectedSeller, $result);
     }
 
-    public function test_execute_should_throw_model_not_found_exception_when_not_found(): void
+    public function testExecuteShouldThrowModelNotFoundExceptionWhenNotFound(): void
     {
         // Arrange
         $repositoryMock = $this->instance(
@@ -49,7 +51,7 @@ class GetSellerUseCaseTest extends TestCase
                     ->once()
                     ->with(999)
                     ->andReturn(null);
-            })
+            }),
         );
 
         // Act & Assert

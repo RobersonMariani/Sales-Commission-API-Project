@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Seller\Tests\Integrations;
 
 use App\Api\Modules\Seller\Tests\Assertables\SellerAssertableJson;
@@ -18,7 +20,7 @@ class GetSellersIntegrationTest extends TestCase
 
     private const ENDPOINT = '/api/sellers';
 
-    public function test_should_return_paginated_list_when_authenticated(): void
+    public function testShouldReturnPaginatedListWhenAuthenticated(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -43,7 +45,7 @@ class GetSellersIntegrationTest extends TestCase
             });
     }
 
-    public function test_should_return_valid_structure_when_no_additional_sellers(): void
+    public function testShouldReturnValidStructureWhenNoAdditionalSellers(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -62,7 +64,7 @@ class GetSellersIntegrationTest extends TestCase
             ]);
     }
 
-    public function test_should_return_unauthorized_when_not_authenticated(): void
+    public function testShouldReturnUnauthorizedWhenNotAuthenticated(): void
     {
         // Act & Assert
         $this

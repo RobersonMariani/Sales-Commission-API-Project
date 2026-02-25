@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Sale\Tests\Data;
 
 use App\Api\Modules\Sale\Data\CreateSaleData;
@@ -51,7 +53,7 @@ class CreateSaleDataTest extends TestCase
     /**
      * @dataProvider validData
      */
-    public function test_valid_data_validation(array $validItem): void
+    public function testValidDataValidation(array $validItem): void
     {
         // Arrange
         $seller = Seller::factory()->create();
@@ -67,11 +69,12 @@ class CreateSaleDataTest extends TestCase
     /**
      * @dataProvider invalidData
      */
-    public function test_invalid_data_validation(array $invalidItem, string $expectedField): void
+    public function testInvalidDataValidation(array $invalidItem, string $expectedField): void
     {
         // Arrange
         $seller = Seller::factory()->create();
         $payload = $invalidItem;
+
         if ($expectedField !== 'seller_id') {
             $payload['seller_id'] = $seller->id;
         }
@@ -83,11 +86,12 @@ class CreateSaleDataTest extends TestCase
             CreateSaleData::validateAndCreate($payload);
         } catch (ValidationException $e) {
             $this->assertArrayHasKey($expectedField, $e->errors());
+
             throw $e;
         }
     }
 
-    public function test_seller_id_exists_validation(): void
+    public function testSellerIdExistsValidation(): void
     {
         // Arrange
         $payload = array_merge(self::validPayload(), ['seller_id' => 99999]);
@@ -99,6 +103,7 @@ class CreateSaleDataTest extends TestCase
             CreateSaleData::validateAndCreate($payload);
         } catch (ValidationException $e) {
             $this->assertArrayHasKey('seller_id', $e->errors());
+
             throw $e;
         }
     }

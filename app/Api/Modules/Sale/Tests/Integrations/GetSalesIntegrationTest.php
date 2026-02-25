@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Sale\Tests\Integrations;
 
 use App\Api\Modules\Sale\Tests\Assertables\SaleAssertableJson;
@@ -19,7 +21,7 @@ class GetSalesIntegrationTest extends TestCase
 
     private const ENDPOINT = '/api/sales';
 
-    public function test_should_return_paginated_list_when_authenticated(): void
+    public function testShouldReturnPaginatedListWhenAuthenticated(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -44,7 +46,7 @@ class GetSalesIntegrationTest extends TestCase
             });
     }
 
-    public function test_should_return_empty_list_when_no_sales(): void
+    public function testShouldReturnEmptyListWhenNoSales(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -60,7 +62,7 @@ class GetSalesIntegrationTest extends TestCase
         $this->assertEmpty($response->json('data'));
     }
 
-    public function test_should_filter_by_seller_id_when_query_param_provided(): void
+    public function testShouldFilterBySellerIdWhenQueryParamProvided(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -84,7 +86,7 @@ class GetSalesIntegrationTest extends TestCase
         $this->assertEquals($seller1->id, $data[1]['seller_id']);
     }
 
-    public function test_should_return_unauthorized_when_not_authenticated(): void
+    public function testShouldReturnUnauthorizedWhenNotAuthenticated(): void
     {
         // Act & Assert
         $this

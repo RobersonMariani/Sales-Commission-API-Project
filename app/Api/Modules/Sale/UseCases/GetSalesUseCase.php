@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Sale\UseCases;
 
 use App\Api\Modules\Sale\Data\SaleQueryData;
 use App\Api\Modules\Sale\Repositories\SaleRepository;
+use App\Models\Sale;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class GetSalesUseCase
@@ -13,7 +16,7 @@ class GetSalesUseCase
     ) {}
 
     /**
-     * @return LengthAwarePaginator<int, \App\Models\Sale>
+     * @return LengthAwarePaginator<int, Sale>
      */
     public function execute(SaleQueryData $query): LengthAwarePaginator
     {

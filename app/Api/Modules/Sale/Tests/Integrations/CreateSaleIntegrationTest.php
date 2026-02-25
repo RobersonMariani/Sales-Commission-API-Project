@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Sale\Tests\Integrations;
 
 use App\Api\Modules\Sale\Tests\Assertables\SaleAssertableJson;
@@ -18,7 +20,7 @@ class CreateSaleIntegrationTest extends TestCase
 
     private const ENDPOINT = '/api/sales';
 
-    public function test_should_return_created_with_calculated_commission_when_data_is_valid(): void
+    public function testShouldReturnCreatedWithCalculatedCommissionWhenDataIsValid(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -48,7 +50,7 @@ class CreateSaleIntegrationTest extends TestCase
             });
     }
 
-    public function test_should_return_unprocessable_when_required_fields_missing(): void
+    public function testShouldReturnUnprocessableWhenRequiredFieldsMissing(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -62,7 +64,7 @@ class CreateSaleIntegrationTest extends TestCase
             ->assertUnprocessable();
     }
 
-    public function test_should_return_unprocessable_when_value_is_zero(): void
+    public function testShouldReturnUnprocessableWhenValueIsZero(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -82,7 +84,7 @@ class CreateSaleIntegrationTest extends TestCase
             ->assertUnprocessable();
     }
 
-    public function test_should_return_unauthorized_when_not_authenticated(): void
+    public function testShouldReturnUnauthorizedWhenNotAuthenticated(): void
     {
         // Arrange
         $seller = Seller::factory()->create();

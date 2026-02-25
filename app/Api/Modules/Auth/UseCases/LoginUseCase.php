@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Auth\UseCases;
 
 use App\Api\Modules\Auth\Data\LoginData;
@@ -21,7 +23,7 @@ class LoginUseCase
 
         if (! $token) {
             throw new HttpResponseException(
-                Response::json(['message' => 'Invalid credentials'], 401)
+                Response::json(['message' => 'Invalid credentials'], 401),
             );
         }
 

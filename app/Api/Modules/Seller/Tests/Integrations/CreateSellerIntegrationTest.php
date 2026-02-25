@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Seller\Tests\Integrations;
 
 use App\Api\Modules\Seller\Tests\Assertables\SellerAssertableJson;
@@ -17,7 +19,7 @@ class CreateSellerIntegrationTest extends TestCase
 
     private const ENDPOINT = '/api/sellers';
 
-    public function test_should_return_created_when_data_is_valid(): void
+    public function testShouldReturnCreatedWhenDataIsValid(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -42,7 +44,7 @@ class CreateSellerIntegrationTest extends TestCase
             });
     }
 
-    public function test_should_return_unprocessable_when_required_fields_missing(): void
+    public function testShouldReturnUnprocessableWhenRequiredFieldsMissing(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -56,7 +58,7 @@ class CreateSellerIntegrationTest extends TestCase
             ->assertUnprocessable();
     }
 
-    public function test_should_return_unprocessable_when_email_already_exists(): void
+    public function testShouldReturnUnprocessableWhenEmailAlreadyExists(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -78,7 +80,7 @@ class CreateSellerIntegrationTest extends TestCase
             ->assertUnprocessable();
     }
 
-    public function test_should_return_unauthorized_when_not_authenticated(): void
+    public function testShouldReturnUnauthorizedWhenNotAuthenticated(): void
     {
         // Act & Assert
         $this

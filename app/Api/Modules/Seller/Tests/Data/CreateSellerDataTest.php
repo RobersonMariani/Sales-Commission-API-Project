@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Seller\Tests\Data;
 
 use App\Api\Modules\Seller\Data\CreateSellerData;
@@ -44,7 +46,7 @@ class CreateSellerDataTest extends TestCase
     /**
      * @dataProvider validData
      */
-    public function test_valid_data_validation(array $validItem): void
+    public function testValidDataValidation(array $validItem): void
     {
         // Arrange & Act
         $result = CreateSellerData::validateAndCreate($validItem);
@@ -56,7 +58,7 @@ class CreateSellerDataTest extends TestCase
     /**
      * @dataProvider invalidData
      */
-    public function test_invalid_data_validation(array $invalidItem, string $expectedField): void
+    public function testInvalidDataValidation(array $invalidItem, string $expectedField): void
     {
         // Arrange & Act & Assert
         $this->expectException(ValidationException::class);
@@ -65,11 +67,12 @@ class CreateSellerDataTest extends TestCase
             CreateSellerData::validateAndCreate($invalidItem);
         } catch (ValidationException $e) {
             $this->assertArrayHasKey($expectedField, $e->errors());
+
             throw $e;
         }
     }
 
-    public function test_email_unique_validation(): void
+    public function testEmailUniqueValidation(): void
     {
         // Arrange
         Seller::factory()->create(['email' => 'existing@example.com']);
@@ -82,6 +85,7 @@ class CreateSellerDataTest extends TestCase
             CreateSellerData::validateAndCreate($payload);
         } catch (ValidationException $e) {
             $this->assertArrayHasKey('email', $e->errors());
+
             throw $e;
         }
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Seller\Tests\UseCases;
 
 use App\Api\Modules\Seller\Data\SellerQueryData;
@@ -16,7 +18,7 @@ use Tests\TestCase;
  */
 class GetSellersUseCaseTest extends TestCase
 {
-    public function test_execute_should_return_paginated_sellers(): void
+    public function testExecuteShouldReturnPaginatedSellers(): void
     {
         // Arrange
         $query = new SellerQueryData(page: 1, perPage: 15);
@@ -28,7 +30,7 @@ class GetSellersUseCaseTest extends TestCase
                 $mock->shouldReceive('getAllPaginated')
                     ->once()
                     ->andReturn($expectedPaginator);
-            })
+            }),
         );
 
         // Act

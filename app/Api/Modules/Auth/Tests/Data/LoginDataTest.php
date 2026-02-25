@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Auth\Tests\Data;
 
 use App\Api\Modules\Auth\Data\LoginData;
@@ -40,7 +42,7 @@ class LoginDataTest extends TestCase
     /**
      * @dataProvider validData
      */
-    public function test_valid_data_validation(array $validItem): void
+    public function testValidDataValidation(array $validItem): void
     {
         // Arrange & Act
         $result = LoginData::validateAndCreate($validItem);
@@ -52,7 +54,7 @@ class LoginDataTest extends TestCase
     /**
      * @dataProvider invalidData
      */
-    public function test_invalid_data_validation(array $invalidItem, string $expectedField): void
+    public function testInvalidDataValidation(array $invalidItem, string $expectedField): void
     {
         // Arrange & Act & Assert
         $this->expectException(ValidationException::class);
@@ -61,6 +63,7 @@ class LoginDataTest extends TestCase
             LoginData::validateAndCreate($invalidItem);
         } catch (ValidationException $e) {
             $this->assertArrayHasKey($expectedField, $e->errors());
+
             throw $e;
         }
     }

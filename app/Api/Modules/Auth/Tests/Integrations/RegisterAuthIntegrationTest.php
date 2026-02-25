@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Auth\Tests\Integrations;
 
 use App\Api\Modules\Auth\Tests\Assertables\UserAssertableJson;
@@ -16,7 +18,7 @@ class RegisterAuthIntegrationTest extends TestCase
 
     private const ENDPOINT = '/api/auth/register';
 
-    public function test_should_return_created_when_data_is_valid(): void
+    public function testShouldReturnCreatedWhenDataIsValid(): void
     {
         // Arrange
         $payload = [
@@ -38,7 +40,7 @@ class RegisterAuthIntegrationTest extends TestCase
             });
     }
 
-    public function test_should_return_unprocessable_when_required_fields_missing(): void
+    public function testShouldReturnUnprocessableWhenRequiredFieldsMissing(): void
     {
         // Act & Assert
         $this
@@ -47,7 +49,7 @@ class RegisterAuthIntegrationTest extends TestCase
             ->assertUnprocessable();
     }
 
-    public function test_should_return_unprocessable_when_email_already_exists(): void
+    public function testShouldReturnUnprocessableWhenEmailAlreadyExists(): void
     {
         // Arrange
         $payload = [

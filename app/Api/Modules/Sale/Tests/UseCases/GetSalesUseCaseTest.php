@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Sale\Tests\UseCases;
 
 use App\Api\Modules\Sale\Data\SaleQueryData;
@@ -16,7 +18,7 @@ use Tests\TestCase;
  */
 class GetSalesUseCaseTest extends TestCase
 {
-    public function test_execute_should_return_paginated_sales(): void
+    public function testExecuteShouldReturnPaginatedSales(): void
     {
         // Arrange
         $query = new SaleQueryData(page: 1, perPage: 15);
@@ -28,7 +30,7 @@ class GetSalesUseCaseTest extends TestCase
                 $mock->shouldReceive('getAllPaginated')
                     ->once()
                     ->andReturn($expectedPaginator);
-            })
+            }),
         );
 
         // Act
@@ -39,7 +41,7 @@ class GetSalesUseCaseTest extends TestCase
         $this->assertInstanceOf(LengthAwarePaginator::class, $result);
     }
 
-    public function test_execute_should_pass_seller_id_filter_to_repository(): void
+    public function testExecuteShouldPassSellerIdFilterToRepository(): void
     {
         // Arrange
         $query = new SaleQueryData(sellerId: 5, page: 1, perPage: 10);
@@ -54,7 +56,7 @@ class GetSalesUseCaseTest extends TestCase
                         return $q->sellerId === 5 && $q->perPage === 10;
                     }))
                     ->andReturn($expectedPaginator);
-            })
+            }),
         );
 
         // Act

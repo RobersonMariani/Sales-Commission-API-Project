@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Sale\Jobs;
 
 use App\Api\Modules\Sale\Mail\DailySellerCommissionMail;
@@ -41,7 +43,7 @@ class SendDailySellerCommissionJob implements ShouldQueue
                 totalValue: (float) $summary->total_value,
                 totalCommission: (float) $summary->total_commission,
                 date: $this->date,
-            )
+            ),
         );
     }
 }

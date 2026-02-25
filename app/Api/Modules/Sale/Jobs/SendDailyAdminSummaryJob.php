@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Sale\Jobs;
 
 use App\Api\Modules\Sale\Mail\DailyAdminSummaryMail;
@@ -41,7 +43,7 @@ class SendDailyAdminSummaryJob implements ShouldQueue
                 salesCount: (int) $summary->count,
                 sellersCount: $sellersCount,
                 date: $this->date,
-            )
+            ),
         );
     }
 }

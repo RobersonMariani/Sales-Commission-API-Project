@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Seller\Repositories;
 
 use App\Api\Modules\Seller\Data\SellerQueryData;

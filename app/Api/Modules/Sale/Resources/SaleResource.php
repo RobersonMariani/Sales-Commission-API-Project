@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Sale\Resources;
 
 use App\Api\Modules\Seller\Resources\SellerResource;

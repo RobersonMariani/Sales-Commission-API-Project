@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Api\Modules\Auth\Controllers\AuthController;
 use App\Api\Modules\Sale\Controllers\SaleController;
 use App\Api\Modules\Seller\Controllers\SellerController;

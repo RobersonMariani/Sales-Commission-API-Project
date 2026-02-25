@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Api\Modules\Sale\Jobs\SendDailyAdminSummaryJob;
 use App\Api\Modules\Sale\Jobs\SendDailySellerCommissionJob;
 use App\Models\Seller;

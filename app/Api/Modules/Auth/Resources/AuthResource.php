@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Auth\Resources;
 
 use Illuminate\Http\Request;
@@ -8,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class AuthResource extends JsonResource
 {
     /**
-     * @param  array{token: string, token_type: string, expires_in: int}  $resource
+     * @param array{token: string, token_type: string, expires_in: int} $resource
      */
     public function __construct(array $resource)
     {

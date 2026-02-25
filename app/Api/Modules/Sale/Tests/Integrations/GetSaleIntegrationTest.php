@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Sale\Tests\Integrations;
 
 use App\Api\Modules\Sale\Tests\Assertables\SaleAssertableJson;
@@ -18,7 +20,7 @@ class GetSaleIntegrationTest extends TestCase
 
     private const ENDPOINT = '/api/sales';
 
-    public function test_should_return_sale_when_authenticated_and_found(): void
+    public function testShouldReturnSaleWhenAuthenticatedAndFound(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -47,7 +49,7 @@ class GetSaleIntegrationTest extends TestCase
             });
     }
 
-    public function test_should_return_not_found_when_sale_does_not_exist(): void
+    public function testShouldReturnNotFoundWhenSaleDoesNotExist(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -61,7 +63,7 @@ class GetSaleIntegrationTest extends TestCase
             ->assertNotFound();
     }
 
-    public function test_should_return_unauthorized_when_not_authenticated(): void
+    public function testShouldReturnUnauthorizedWhenNotAuthenticated(): void
     {
         // Arrange
         $sale = Sale::factory()->create();

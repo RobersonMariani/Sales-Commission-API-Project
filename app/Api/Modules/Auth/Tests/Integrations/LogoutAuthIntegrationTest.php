@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Auth\Tests\Integrations;
 
 use App\Models\User;
@@ -15,7 +17,7 @@ class LogoutAuthIntegrationTest extends TestCase
 
     private const ENDPOINT = '/api/auth/logout';
 
-    public function test_should_return_success_when_authenticated(): void
+    public function testShouldReturnSuccessWhenAuthenticated(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -30,7 +32,7 @@ class LogoutAuthIntegrationTest extends TestCase
             ->assertJson(['message' => 'Successfully logged out']);
     }
 
-    public function test_should_return_unauthorized_when_not_authenticated(): void
+    public function testShouldReturnUnauthorizedWhenNotAuthenticated(): void
     {
         // Act & Assert
         $this

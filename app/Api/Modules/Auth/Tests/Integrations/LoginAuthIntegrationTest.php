@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Auth\Tests\Integrations;
 
 use App\Api\Modules\Auth\Tests\Assertables\AuthAssertableJson;
@@ -17,7 +19,7 @@ class LoginAuthIntegrationTest extends TestCase
 
     private const ENDPOINT = '/api/auth/login';
 
-    public function test_should_return_token_when_credentials_are_valid(): void
+    public function testShouldReturnTokenWhenCredentialsAreValid(): void
     {
         // Arrange
         User::factory()->create([
@@ -41,7 +43,7 @@ class LoginAuthIntegrationTest extends TestCase
             });
     }
 
-    public function test_should_return_unauthorized_when_credentials_are_invalid(): void
+    public function testShouldReturnUnauthorizedWhenCredentialsAreInvalid(): void
     {
         // Arrange
         $payload = [
@@ -56,7 +58,7 @@ class LoginAuthIntegrationTest extends TestCase
             ->assertUnauthorized();
     }
 
-    public function test_should_return_unprocessable_when_required_fields_missing(): void
+    public function testShouldReturnUnprocessableWhenRequiredFieldsMissing(): void
     {
         // Act & Assert
         $this

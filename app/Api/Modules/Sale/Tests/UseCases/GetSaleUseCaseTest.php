@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Sale\Tests\UseCases;
 
 use App\Api\Modules\Sale\Repositories\SaleRepository;
@@ -15,7 +17,7 @@ use Tests\TestCase;
  */
 class GetSaleUseCaseTest extends TestCase
 {
-    public function test_execute_should_return_sale_when_found(): void
+    public function testExecuteShouldReturnSaleWhenFound(): void
     {
         // Arrange
         $expectedSale = new Sale([
@@ -33,7 +35,7 @@ class GetSaleUseCaseTest extends TestCase
                     ->once()
                     ->with(1)
                     ->andReturn($expectedSale);
-            })
+            }),
         );
 
         // Act
@@ -45,7 +47,7 @@ class GetSaleUseCaseTest extends TestCase
         $this->assertEquals($expectedSale, $result);
     }
 
-    public function test_execute_should_throw_model_not_found_exception_when_not_found(): void
+    public function testExecuteShouldThrowModelNotFoundExceptionWhenNotFound(): void
     {
         // Arrange
         $this->instance(
@@ -55,7 +57,7 @@ class GetSaleUseCaseTest extends TestCase
                     ->once()
                     ->with(999)
                     ->andReturn(null);
-            })
+            }),
         );
 
         // Act & Assert

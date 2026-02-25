@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Seller\Tests\Integrations;
 
 use App\Api\Modules\Seller\Tests\Assertables\SellerAssertableJson;
@@ -18,7 +20,7 @@ class GetSellerIntegrationTest extends TestCase
 
     private const ENDPOINT = '/api/sellers';
 
-    public function test_should_return_seller_when_authenticated_and_found(): void
+    public function testShouldReturnSellerWhenAuthenticatedAndFound(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -41,7 +43,7 @@ class GetSellerIntegrationTest extends TestCase
             });
     }
 
-    public function test_should_return_not_found_when_seller_does_not_exist(): void
+    public function testShouldReturnNotFoundWhenSellerDoesNotExist(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -55,7 +57,7 @@ class GetSellerIntegrationTest extends TestCase
             ->assertNotFound();
     }
 
-    public function test_should_return_unauthorized_when_not_authenticated(): void
+    public function testShouldReturnUnauthorizedWhenNotAuthenticated(): void
     {
         // Arrange
         $seller = Seller::factory()->create();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Seller\UseCases;
 
 use App\Api\Modules\Sale\Jobs\SendDailySellerCommissionJob;
@@ -18,7 +20,7 @@ class ResendCommissionUseCase
 
         if (! $seller) {
             throw new HttpResponseException(
-                response()->json(['message' => 'Seller not found.'], 404)
+                response()->json(['message' => 'Seller not found.'], 404),
             );
         }
 

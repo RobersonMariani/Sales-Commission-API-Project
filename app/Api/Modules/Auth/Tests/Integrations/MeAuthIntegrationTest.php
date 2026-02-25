@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Auth\Tests\Integrations;
 
 use App\Api\Modules\Auth\Tests\Assertables\UserAssertableJson;
@@ -17,7 +19,7 @@ class MeAuthIntegrationTest extends TestCase
 
     private const ENDPOINT = '/api/auth/me';
 
-    public function test_should_return_user_when_authenticated(): void
+    public function testShouldReturnUserWhenAuthenticated(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -39,7 +41,7 @@ class MeAuthIntegrationTest extends TestCase
             });
     }
 
-    public function test_should_return_unauthorized_when_not_authenticated(): void
+    public function testShouldReturnUnauthorizedWhenNotAuthenticated(): void
     {
         // Act & Assert
         $this

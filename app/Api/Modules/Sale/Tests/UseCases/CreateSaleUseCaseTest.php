@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Api\Modules\Sale\Tests\UseCases;
 
 use App\Api\Modules\Sale\Data\CreateSaleData;
 use App\Api\Modules\Sale\Repositories\SaleRepository;
 use App\Api\Modules\Sale\UseCases\CreateSaleUseCase;
 use App\Models\Sale;
+use Closure;
 use Illuminate\Support\Facades\DB;
 use Mockery;
 use Mockery\MockInterface;
@@ -16,7 +19,7 @@ use Tests\TestCase;
  */
 class CreateSaleUseCaseTest extends TestCase
 {
-    public function test_execute_should_return_sale_with_calculated_commission_when_data_is_valid(): void
+    public function testExecuteShouldReturnSaleWithCalculatedCommissionWhenDataIsValid(): void
     {
         // Arrange
         $data = new CreateSaleData(sellerId: 1, value: 100.00, saleDate: '2025-01-15');
@@ -40,12 +43,12 @@ class CreateSaleUseCaseTest extends TestCase
                             && $data['sale_date'] === '2025-01-15';
                     }))
                     ->andReturn($expectedSale);
-            })
+            }),
         );
 
         DB::shouldReceive('transaction')
             ->once()
-            ->with(Mockery::type(\Closure::class))
+            ->with(Mockery::type(Closure::class))
             ->andReturnUsing(fn ($callback) => $callback());
 
         // Act
@@ -57,7 +60,7 @@ class CreateSaleUseCaseTest extends TestCase
         $this->assertEquals(8.50, $result->commission);
     }
 
-    public function test_execute_should_calculate_commission_correctly_for_different_values(): void
+    public function testExecuteShouldCalculateCommissionCorrectlyForDifferentValues(): void
     {
         // Arrange
         $data = new CreateSaleData(sellerId: 1, value: 1000.00, saleDate: '2025-01-15');
@@ -78,12 +81,12 @@ class CreateSaleUseCaseTest extends TestCase
                         return $data['commission'] === 85.00;
                     }))
                     ->andReturn($expectedSale);
-            })
+            }),
         );
 
         DB::shouldReceive('transaction')
             ->once()
-            ->with(Mockery::type(\Closure::class))
+            ->with(Mockery::type(Closure::class))
             ->andReturnUsing(fn ($callback) => $callback());
 
         // Act
