@@ -1,8 +1,16 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use App\Api\Modules\Sale\Jobs\SendDailyAdminSummaryJob;
+use App\Api\Modules\Sale\Jobs\SendDailySellerCommissionJob;
+use App\Models\Seller;
+use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+Schedule::call(function () {
+    $date = now()->toDateString();
+
+    Seller::query()->each(function (Seller $seller) use ($date) {
+        SendDailySellerCommissionJob::dispatch($seller, $date);
+    });
+
+    SendDailyAdminSummaryJob::dispatch($date);
+})->dailyAt('23:59')->name('send-daily-commission-emails');
