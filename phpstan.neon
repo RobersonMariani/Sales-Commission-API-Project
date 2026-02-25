@@ -5,6 +5,8 @@ parameters:
     paths:
         - app/
     level: 5
+    bootstrapFiles:
+        - _ide_helper_models.php
     ignoreErrors:
         # Mockery fluent methods not recognized by PHPStan
         -
