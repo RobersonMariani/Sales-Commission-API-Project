@@ -14,6 +14,9 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
+/**
+ * Job que envia o e-mail diário de comissão para um vendedor específico.
+ */
 class SendDailySellerCommissionJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -23,6 +26,9 @@ class SendDailySellerCommissionJob implements ShouldQueue
         public readonly string $date,
     ) {}
 
+    /**
+     * Calcula o resumo de vendas do dia e envia o e-mail ao vendedor.
+     */
     public function handle(): void
     {
         /** @var object{count: int, total_value: float, total_commission: float} $summary */

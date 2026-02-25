@@ -8,19 +8,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Modelo que representa um vendedor no sistema.
+ *
+ * @mixin IdeHelperSeller
+ */
 class Seller extends Model
 {
     /** @use HasFactory<\Database\Factories\SellerFactory> */
     use HasFactory;
 
-    /** @var list<string> */
     protected $fillable = [
         'name',
         'email',
     ];
 
     /**
-     * @return HasMany<Sale, $this>
+     * Retorna as vendas associadas a este vendedor.
      */
     public function sales(): HasMany
     {

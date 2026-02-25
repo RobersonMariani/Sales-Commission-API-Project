@@ -14,6 +14,9 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
+/**
+ * Job que envia o e-mail diário com o resumo geral de vendas ao administrador.
+ */
 class SendDailyAdminSummaryJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -22,6 +25,9 @@ class SendDailyAdminSummaryJob implements ShouldQueue
         public readonly string $date,
     ) {}
 
+    /**
+     * Calcula o resumo geral de vendas do dia e envia o e-mail ao administrador.
+     */
     public function handle(): void
     {
         /** @var object{count: int, total_sales: float} $summary */

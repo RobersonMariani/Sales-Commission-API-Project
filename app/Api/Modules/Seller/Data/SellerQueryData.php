@@ -9,6 +9,9 @@ use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 use Spatie\LaravelData\Support\Validation\ValidationContext;
 
+/**
+ * DTO de validação para os parâmetros de consulta de vendedores.
+ */
 #[MapName(SnakeCaseMapper::class)]
 class SellerQueryData extends Data
 {
@@ -17,6 +20,9 @@ class SellerQueryData extends Data
         public ?int $perPage = 15,
     ) {}
 
+    /**
+     * Define as regras de validação para os filtros de listagem de vendedores.
+     */
     public static function rules(ValidationContext $context): array
     {
         return [

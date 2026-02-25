@@ -10,6 +10,9 @@ use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 use Spatie\LaravelData\Support\Validation\ValidationContext;
 
+/**
+ * DTO de validação para registro de novo usuário.
+ */
 #[MapName(SnakeCaseMapper::class)]
 class RegisterData extends Data
 {
@@ -20,6 +23,9 @@ class RegisterData extends Data
         public string $password_confirmation,
     ) {}
 
+    /**
+     * Define as regras de validação para o registro.
+     */
     public static function rules(ValidationContext $context): array
     {
         return [
@@ -30,6 +36,9 @@ class RegisterData extends Data
         ];
     }
 
+    /**
+     * Converte os dados para o formato de criação do model User.
+     */
     public function toArrayModel(): array
     {
         return [

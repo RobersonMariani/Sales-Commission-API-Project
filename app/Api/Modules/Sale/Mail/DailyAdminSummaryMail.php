@@ -11,6 +11,9 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * E-mail diário enviado ao administrador com o resumo geral de vendas.
+ */
 class DailyAdminSummaryMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
@@ -22,6 +25,9 @@ class DailyAdminSummaryMail extends Mailable implements ShouldQueue
         public readonly string $date,
     ) {}
 
+    /**
+     * Define o envelope do e-mail com o assunto.
+     */
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -29,6 +35,9 @@ class DailyAdminSummaryMail extends Mailable implements ShouldQueue
         );
     }
 
+    /**
+     * Define o conteúdo do e-mail com a view utilizada.
+     */
     public function content(): Content
     {
         return new Content(

@@ -17,8 +17,14 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Controlador responsável pelas operações de autenticação.
+ */
 class AuthController extends Controller
 {
+    /**
+     * Registra um novo usuário no sistema.
+     */
     public function register(Request $request, RegisterUseCase $useCase): Response
     {
         $data = RegisterData::validateAndCreate($request->all());
@@ -28,6 +34,9 @@ class AuthController extends Controller
             ->setStatusCode(201);
     }
 
+    /**
+     * Realiza o login e retorna o token JWT.
+     */
     public function login(Request $request, LoginUseCase $useCase): AuthResource
     {
         $data = LoginData::validateAndCreate($request->all());
@@ -35,6 +44,9 @@ class AuthController extends Controller
         return AuthResource::make($useCase->execute($data));
     }
 
+    /**
+     * Realiza o logout do usuário autenticado, invalidando o token.
+     */
     public function logout(LogoutUseCase $useCase): JsonResponse
     {
         $useCase->execute();
@@ -42,6 +54,9 @@ class AuthController extends Controller
         return response()->json(['message' => 'Successfully logged out']);
     }
 
+    /**
+     * Retorna os dados do usuário autenticado.
+     */
     public function me(GetMeUseCase $useCase): Response
     {
         $user = $useCase->execute();

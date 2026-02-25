@@ -17,8 +17,14 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Controlador responsável pelas operações de vendedores.
+ */
 class SellerController extends Controller
 {
+    /**
+     * Cadastra um novo vendedor no sistema.
+     */
     public function store(Request $request, CreateSellerUseCase $useCase): Response
     {
         $data = CreateSellerData::validateAndCreate($request->all());
@@ -28,6 +34,9 @@ class SellerController extends Controller
             ->setStatusCode(201);
     }
 
+    /**
+     * Lista os vendedores com paginação.
+     */
     public function index(Request $request, GetSellersUseCase $useCase): AnonymousResourceCollection
     {
         $query = SellerQueryData::validateAndCreate($request->query());
@@ -35,11 +44,17 @@ class SellerController extends Controller
         return SellerResource::collection($useCase->execute($query));
     }
 
+    /**
+     * Exibe os detalhes de um vendedor específico.
+     */
     public function show(int $seller, GetSellerUseCase $useCase): SellerResource
     {
         return SellerResource::make($useCase->execute($seller));
     }
 
+    /**
+     * Reenvia o e-mail de comissão para um vendedor em uma data específica.
+     */
     public function resendCommission(int $seller, Request $request, ResendCommissionUseCase $useCase): JsonResponse
     {
         $useCase->execute($seller, $request->input('date'));

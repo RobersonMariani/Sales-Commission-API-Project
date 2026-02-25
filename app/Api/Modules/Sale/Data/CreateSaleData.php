@@ -10,6 +10,9 @@ use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 use Spatie\LaravelData\Support\Validation\ValidationContext;
 
+/**
+ * DTO de validação para criação de uma nova venda.
+ */
 #[MapName(SnakeCaseMapper::class)]
 class CreateSaleData extends Data
 {
@@ -19,6 +22,9 @@ class CreateSaleData extends Data
         public string $saleDate,
     ) {}
 
+    /**
+     * Define as regras de validação para criação de venda.
+     */
     public static function rules(ValidationContext $context): array
     {
         return [
@@ -29,7 +35,7 @@ class CreateSaleData extends Data
     }
 
     /**
-     * @return array<string, mixed>
+     * Converte os dados para o formato de criação do model Sale.
      */
     public function toArrayModel(): array
     {

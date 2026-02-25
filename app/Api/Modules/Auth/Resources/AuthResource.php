@@ -7,18 +7,18 @@ namespace App\Api\Modules\Auth\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * Resource que formata a resposta de autenticação com token JWT.
+ */
 class AuthResource extends JsonResource
 {
-    /**
-     * @param array{token: string, token_type: string, expires_in: int} $resource
-     */
     public function __construct(array $resource)
     {
         parent::__construct($resource);
     }
 
     /**
-     * @return array<string, mixed>
+     * Transforma o recurso de autenticação em array para a resposta JSON.
      */
     public function toArray(Request $request): array
     {

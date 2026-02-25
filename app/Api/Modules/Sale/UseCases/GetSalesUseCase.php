@@ -6,9 +6,11 @@ namespace App\Api\Modules\Sale\UseCases;
 
 use App\Api\Modules\Sale\Data\SaleQueryData;
 use App\Api\Modules\Sale\Repositories\SaleRepository;
-use App\Models\Sale;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
+/**
+ * Caso de uso responsável pela listagem paginada de vendas.
+ */
 class GetSalesUseCase
 {
     public function __construct(
@@ -16,7 +18,7 @@ class GetSalesUseCase
     ) {}
 
     /**
-     * @return LengthAwarePaginator<int, Sale>
+     * Retorna as vendas paginadas com filtro opcional por vendedor.
      */
     public function execute(SaleQueryData $query): LengthAwarePaginator
     {

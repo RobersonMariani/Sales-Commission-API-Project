@@ -12,6 +12,9 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * E-mail diário enviado ao vendedor com o resumo de suas comissões.
+ */
 class DailySellerCommissionMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
@@ -24,6 +27,9 @@ class DailySellerCommissionMail extends Mailable implements ShouldQueue
         public readonly string $date,
     ) {}
 
+    /**
+     * Define o envelope do e-mail com o assunto.
+     */
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -31,6 +37,9 @@ class DailySellerCommissionMail extends Mailable implements ShouldQueue
         );
     }
 
+    /**
+     * Define o conteúdo do e-mail com a view utilizada.
+     */
     public function content(): Content
     {
         return new Content(

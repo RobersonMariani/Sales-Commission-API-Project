@@ -8,12 +8,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Modelo que representa uma venda no sistema.
+ *
+ * @mixin IdeHelperSale
+ */
 class Sale extends Model
 {
     /** @use HasFactory<\Database\Factories\SaleFactory> */
     use HasFactory;
 
-    /** @var list<string> */
     protected $fillable = [
         'seller_id',
         'value',
@@ -21,9 +25,6 @@ class Sale extends Model
         'sale_date',
     ];
 
-    /**
-     * @var array<string, string>
-     */
     protected $casts = [
         'value' => 'decimal:2',
         'commission' => 'decimal:2',
@@ -31,7 +32,7 @@ class Sale extends Model
     ];
 
     /**
-     * @return BelongsTo<Seller, $this>
+     * Retorna o vendedor associado a esta venda.
      */
     public function seller(): BelongsTo
     {

@@ -9,11 +9,15 @@ use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @mixin Sale */
+/**
+ * Resource que formata os dados de uma venda para a resposta JSON.
+ *
+ * @mixin Sale
+ */
 class SaleResource extends JsonResource
 {
     /**
-     * @return array<string, mixed>
+     * Transforma o recurso de venda em array para a resposta JSON.
      */
     public function toArray(Request $request): array
     {

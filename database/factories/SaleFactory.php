@@ -9,6 +9,8 @@ use App\Models\Seller;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
+ * Factory para geração de dados fictícios de vendas.
+ *
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Sale>
  */
 class SaleFactory extends Factory
@@ -16,9 +18,7 @@ class SaleFactory extends Factory
     protected $model = Sale::class;
 
     /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
+     * Define o estado padrão do model Sale com comissão calculada automaticamente.
      */
     public function definition(): array
     {

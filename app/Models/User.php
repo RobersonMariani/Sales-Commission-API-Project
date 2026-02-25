@@ -9,25 +9,27 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * Modelo que representa um usuário autenticável no sistema.
+ *
+ * @mixin IdeHelperUser
+ */
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /** @var list<string> */
     protected $fillable = [
         'name',
         'email',
         'password',
     ];
 
-    /** @var list<string> */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /** @return array<string, string> */
     protected function casts(): array
     {
         return [
@@ -36,12 +38,17 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
+    /**
+     * Retorna o identificador usado pelo JWT para este usuário.
+     */
     public function getJWTIdentifier(): mixed
     {
         return $this->getKey();
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * Retorna as claims customizadas incluídas no token JWT.
+     */
     public function getJWTCustomClaims(): array
     {
         return [];
