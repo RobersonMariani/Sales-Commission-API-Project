@@ -13,6 +13,7 @@
         </testsuite>
         <testsuite name="Api">
             <directory>app/Api/Modules</directory>
+            <directory>app/Api/Support/Tests</directory>
         </testsuite>
     </testsuites>
     <source>
