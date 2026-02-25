@@ -1,119 +1,468 @@
 # Sales Commission API
 
-API RESTful para gerenciamento de vendas e cálculo de comissões de vendedores, construída com Laravel 12.
+API RESTful para gerenciamento de vendas e cálculo automático de comissões de vendedores, construída com Laravel 12.
+
+## Funcionalidades
+
+- Autenticação JWT (registro, login, logout, perfil)
+- CRUD de vendedores
+- Cadastro e listagem de vendas com cálculo automático de comissão (8,5%)
+- Envio diário de e-mails com resumo de comissões para cada vendedor
+- Envio diário de e-mail administrativo com o resumo geral de vendas
+- Reenvio manual de e-mail de comissão para um vendedor específico
+- Paginação configurável em todas as listagens
+- Fila assíncrona via Redis para processamento de e-mails
+- Validação de dados via DTOs com Spatie Laravel Data
 
 ## Stack
 
-- **PHP 8.4+** / **Laravel 12**
-- **MySQL 9.x** — banco de dados
-- **Redis** — cache e filas
-- **Docker** — ambiente de desenvolvimento
-- **JWT** — autenticação via `php-open-source-saver/jwt-auth`
-- **Spatie Laravel Data** — DTOs com validação
-- **Mailpit** — servidor SMTP local para testes de email
+| Camada         | Tecnologia                                 |
+|----------------|--------------------------------------------|
+| Linguagem      | PHP 8.5                                    |
+| Framework      | Laravel 12                                 |
+| Banco de Dados | MySQL 9.x                                  |
+| Cache / Fila   | Redis                                      |
+| Autenticação   | JWT (`php-open-source-saver/jwt-auth`)     |
+| DTOs           | Spatie Laravel Data                        |
+| E-mail (dev)   | Mailpit                                    |
+| Containers     | Docker Compose                             |
+| Code Style     | Laravel Pint (PSR-12 strict)               |
+| Análise        | PHPStan / Larastan (nível 5)               |
+| Testes         | PHPUnit (unitários + integração)           |
 
-## Setup com Docker
+## Requisitos
+
+- Docker e Docker Compose
+
+## Instalação
 
 ```bash
-# Clonar o repositório
 git clone https://github.com/RobersonMariani/Sales-Commission-API-Project.git
 cd Sales-Commission-API-Project
 
-# Copiar o .env
 cp .env.example .env
 
-# Subir os containers
 docker compose up -d
 
-# Instalar dependências
 docker compose exec app composer install
-
-# Gerar chaves
 docker compose exec app php artisan key:generate
 docker compose exec app php artisan jwt:secret
-
-# Rodar migrations e seeders
 docker compose exec app php artisan migrate --seed
 ```
 
-## Acesso
+Após o setup, a API estará disponível em `http://localhost:8000`.
 
-| Serviço  | URL                    |
-|----------|------------------------|
-| API      | http://localhost:8000  |
-| Mailpit  | http://localhost:8025  |
-| MySQL    | localhost:3306         |
-| Redis    | localhost:6379         |
+## Serviços
 
-## Dados do Seeder
+| Serviço   | URL / Porta           | Descrição                              |
+|-----------|-----------------------|----------------------------------------|
+| API       | http://localhost:8000  | Aplicação Laravel                      |
+| Mailpit   | http://localhost:8025  | Interface web para visualizar e-mails  |
+| MySQL     | localhost:3306         | Banco de dados                         |
+| Redis     | localhost:6380         | Cache e filas                          |
 
-- **Admin:** admin@salescommission.com / password
-- **Vendedores:** 10 vendedores criados via factory
-- **Vendas:** ~50 vendas distribuídas nos últimos 30 dias
+## Dados Iniciais (Seeder)
+
+| Dado        | Detalhe                                                   |
+|-------------|-----------------------------------------------------------|
+| Admin       | `admin@salescommission.com` / `password`                  |
+| Vendedores  | 10 vendedores gerados via factory                         |
+| Vendas      | 3 a 8 vendas por vendedor, distribuídas nos últimos 30 dias |
+
+---
 
 ## Endpoints
 
-### Auth
+Todas as rotas (exceto registro, login e health check) requerem o header:
 
-| Método | Endpoint             | Descrição             | Auth |
-|--------|----------------------|-----------------------|------|
-| POST   | /api/auth/register   | Registrar usuário     | Não  |
-| POST   | /api/auth/login      | Login (retorna JWT)   | Não  |
-| POST   | /api/auth/logout     | Logout (invalida JWT) | Sim  |
-| GET    | /api/auth/me         | Usuário autenticado   | Sim  |
-
-### Sellers
-
-| Método | Endpoint                              | Descrição               | Auth |
-|--------|---------------------------------------|-------------------------|------|
-| POST   | /api/sellers                          | Criar vendedor          | Sim  |
-| GET    | /api/sellers                          | Listar vendedores       | Sim  |
-| GET    | /api/sellers/{id}                     | Buscar vendedor         | Sim  |
-| POST   | /api/sellers/{id}/resend-commission   | Reenviar email comissão | Sim  |
-
-### Sales
-
-| Método | Endpoint                 | Descrição             | Auth |
-|--------|--------------------------|-----------------------|------|
-| POST   | /api/sales               | Criar venda           | Sim  |
-| GET    | /api/sales               | Listar vendas         | Sim  |
-| GET    | /api/sales?seller_id=X   | Vendas por vendedor   | Sim  |
-| GET    | /api/sales/{id}          | Buscar venda          | Sim  |
-
-## Autenticação
-
-Usar o header `Authorization: Bearer {token}` em todas as requisições autenticadas.
-
-```bash
-# Login
-curl -X POST http://localhost:8000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email": "admin@salescommission.com", "password": "password"}'
-
-# Usar o token retornado
-curl http://localhost:8000/api/sellers \
-  -H "Authorization: Bearer {token}"
 ```
+Authorization: Bearer {token}
+```
+
+### Health Check
+
+```
+GET /api/health
+```
+
+```json
+{ "status": "ok" }
+```
+
+---
+
+### Autenticação
+
+#### Registrar usuário
+
+```
+POST /api/auth/register
+```
+
+**Body:**
+
+```json
+{
+  "name": "João Silva",
+  "email": "joao@email.com",
+  "password": "12345678",
+  "password_confirmation": "12345678"
+}
+```
+
+**Resposta** `201`:
+
+```json
+{
+  "data": {
+    "id": 2,
+    "name": "João Silva",
+    "email": "joao@email.com",
+    "email_verified_at": null,
+    "created_at": "2026-02-24T12:00:00+00:00",
+    "updated_at": "2026-02-24T12:00:00+00:00"
+  }
+}
+```
+
+**Validações:**
+- `name`: obrigatório, string, máx. 100 caracteres
+- `email`: obrigatório, formato e-mail, único na tabela `users`
+- `password`: obrigatório, string, mín. 8 caracteres, confirmação obrigatória
+
+#### Login
+
+```
+POST /api/auth/login
+```
+
+**Body:**
+
+```json
+{
+  "email": "admin@salescommission.com",
+  "password": "password"
+}
+```
+
+**Resposta** `200`:
+
+```json
+{
+  "data": {
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOi...",
+    "token_type": "bearer",
+    "expires_in": 3600
+  }
+}
+```
+
+#### Logout
+
+```
+POST /api/auth/logout
+```
+
+**Resposta** `200`:
+
+```json
+{ "message": "Successfully logged out" }
+```
+
+#### Perfil do usuário autenticado
+
+```
+GET /api/auth/me
+```
+
+**Resposta** `200`:
+
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Admin",
+    "email": "admin@salescommission.com",
+    "email_verified_at": "2026-02-24T12:00:00+00:00",
+    "created_at": "2026-02-24T12:00:00+00:00",
+    "updated_at": "2026-02-24T12:00:00+00:00"
+  }
+}
+```
+
+---
+
+### Vendedores
+
+#### Criar vendedor
+
+```
+POST /api/sellers
+```
+
+**Body:**
+
+```json
+{
+  "name": "Maria Souza",
+  "email": "maria@email.com"
+}
+```
+
+**Resposta** `201`:
+
+```json
+{
+  "data": {
+    "id": 11,
+    "name": "Maria Souza",
+    "email": "maria@email.com",
+    "created_at": "2026-02-24T12:00:00+00:00",
+    "updated_at": "2026-02-24T12:00:00+00:00"
+  }
+}
+```
+
+**Validações:**
+- `name`: obrigatório, string, máx. 100 caracteres
+- `email`: obrigatório, formato e-mail, único na tabela `sellers`
+
+#### Listar vendedores
+
+```
+GET /api/sellers
+GET /api/sellers?page=2&per_page=10
+```
+
+| Parâmetro  | Tipo | Padrão | Descrição                  |
+|------------|------|--------|----------------------------|
+| `page`     | int  | 1      | Página atual               |
+| `per_page` | int  | 15     | Itens por página (máx. 100)|
+
+**Resposta** `200`:
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Carlos Lima",
+      "email": "carlos@email.com",
+      "created_at": "2026-02-24T12:00:00+00:00",
+      "updated_at": "2026-02-24T12:00:00+00:00"
+    }
+  ],
+  "links": { "first": "...", "last": "...", "prev": null, "next": "..." },
+  "meta": { "current_page": 1, "last_page": 1, "per_page": 15, "total": 10 }
+}
+```
+
+#### Buscar vendedor
+
+```
+GET /api/sellers/{id}
+```
+
+**Resposta** `200`:
+
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Carlos Lima",
+    "email": "carlos@email.com",
+    "created_at": "2026-02-24T12:00:00+00:00",
+    "updated_at": "2026-02-24T12:00:00+00:00"
+  }
+}
+```
+
+#### Reenviar e-mail de comissão
+
+```
+POST /api/sellers/{id}/resend-commission
+```
+
+**Body (opcional):**
+
+```json
+{
+  "date": "2026-02-24"
+}
+```
+
+Se `date` não for enviado, usa a data atual.
+
+**Resposta** `200`:
+
+```json
+{ "message": "Commission email queued successfully." }
+```
+
+---
+
+### Vendas
+
+#### Criar venda
+
+```
+POST /api/sales
+```
+
+**Body:**
+
+```json
+{
+  "seller_id": 1,
+  "value": 1500.00,
+  "sale_date": "2026-02-24"
+}
+```
+
+A comissão de **8,5%** (R$ 127,50 neste exemplo) é calculada automaticamente.
+
+**Resposta** `201`:
+
+```json
+{
+  "data": {
+    "id": 56,
+    "seller_id": 1,
+    "value": 1500.00,
+    "commission": 127.50,
+    "sale_date": "2026-02-24",
+    "created_at": "2026-02-24T12:00:00+00:00",
+    "updated_at": "2026-02-24T12:00:00+00:00",
+    "seller": {
+      "id": 1,
+      "name": "Carlos Lima",
+      "email": "carlos@email.com",
+      "created_at": "2026-02-24T12:00:00+00:00",
+      "updated_at": "2026-02-24T12:00:00+00:00"
+    }
+  }
+}
+```
+
+**Validações:**
+- `seller_id`: obrigatório, inteiro, deve existir na tabela `sellers`
+- `value`: obrigatório, numérico, mínimo 0.01
+- `sale_date`: obrigatório, formato de data válido
+
+#### Listar vendas
+
+```
+GET /api/sales
+GET /api/sales?seller_id=1&page=1&per_page=20
+```
+
+| Parâmetro   | Tipo | Padrão | Descrição                         |
+|-------------|------|--------|-----------------------------------|
+| `seller_id` | int  | —      | Filtra vendas por vendedor        |
+| `page`      | int  | 1      | Página atual                      |
+| `per_page`  | int  | 15     | Itens por página (máx. 100)       |
+
+Resultados ordenados por `sale_date` (mais recente primeiro).
+
+**Resposta** `200`:
+
+```json
+{
+  "data": [
+    {
+      "id": 56,
+      "seller_id": 1,
+      "value": 1500.00,
+      "commission": 127.50,
+      "sale_date": "2026-02-24",
+      "created_at": "2026-02-24T12:00:00+00:00",
+      "updated_at": "2026-02-24T12:00:00+00:00",
+      "seller": { "id": 1, "name": "Carlos Lima", "email": "carlos@email.com", "..." : "..." }
+    }
+  ],
+  "links": { "first": "...", "last": "...", "prev": null, "next": null },
+  "meta": { "current_page": 1, "last_page": 1, "per_page": 15, "total": 1 }
+}
+```
+
+#### Buscar venda
+
+```
+GET /api/sales/{id}
+```
+
+**Resposta** `200`:
+
+```json
+{
+  "data": {
+    "id": 56,
+    "seller_id": 1,
+    "value": 1500.00,
+    "commission": 127.50,
+    "sale_date": "2026-02-24",
+    "created_at": "2026-02-24T12:00:00+00:00",
+    "updated_at": "2026-02-24T12:00:00+00:00",
+    "seller": {
+      "id": 1,
+      "name": "Carlos Lima",
+      "email": "carlos@email.com",
+      "created_at": "2026-02-24T12:00:00+00:00",
+      "updated_at": "2026-02-24T12:00:00+00:00"
+    }
+  }
+}
+```
+
+---
 
 ## Comissão
 
-A comissão é calculada automaticamente em **8.5%** sobre o valor da venda no momento do cadastro.
+A comissão é calculada automaticamente no momento do cadastro da venda, aplicando a taxa fixa de **8,5%** sobre o valor da venda:
 
-## Emails
+```
+comissão = valor_da_venda × 0,085
+```
 
-- **Email diário para vendedores** — resumo de vendas, valor total e comissão do dia
-- **Email diário para admin** — soma de todas as vendas do dia
-- **Reenvio manual** — `POST /api/sellers/{id}/resend-commission` (aceita parâmetro `date` opcional)
-- Emails são processados via **fila Redis** e podem ser visualizados no **Mailpit** (http://localhost:8025)
-- O scheduler dispara os emails diários às 23:59
+O valor é arredondado para 2 casas decimais e armazenado junto à venda.
+
+## E-mails
+
+O sistema envia dois tipos de e-mail diário, agendados para **23:59** via scheduler:
+
+| E-mail                          | Destinatário      | Conteúdo                                                     |
+|---------------------------------|-------------------|--------------------------------------------------------------|
+| Resumo de Vendas                | Cada vendedor     | Quantidade de vendas, valor total e comissão total do dia     |
+| Resumo Administrativo de Vendas | Admin (`ADMIN_EMAIL`) | Vendedores ativos, quantidade de vendas e valor total do dia |
+
+- Os e-mails são processados via **fila Redis** (assíncrono)
+- Em desenvolvimento, podem ser visualizados no **Mailpit**: http://localhost:8025
+- O reenvio manual pode ser feito via `POST /api/sellers/{id}/resend-commission`
+
+## Variáveis de Ambiente
+
+| Variável       | Descrição                                | Valor Padrão                  |
+|----------------|------------------------------------------|-------------------------------|
+| `DB_HOST`      | Host do MySQL                            | `mysql`                       |
+| `DB_DATABASE`  | Nome do banco                            | `sales_commission`            |
+| `DB_USERNAME`  | Usuário do banco                         | `sales_user`                  |
+| `DB_PASSWORD`  | Senha do banco                           | `secret`                      |
+| `REDIS_HOST`   | Host do Redis                            | `redis`                       |
+| `QUEUE_CONNECTION` | Driver da fila                       | `redis`                       |
+| `CACHE_STORE`  | Driver de cache                          | `redis`                       |
+| `MAIL_HOST`    | Host SMTP                                | `mailpit`                     |
+| `MAIL_PORT`    | Porta SMTP                               | `1025`                        |
+| `ADMIN_EMAIL`  | E-mail que recebe o resumo administrativo| `admin@salescommission.com`   |
+| `JWT_SECRET`   | Chave secreta do JWT (gerada pelo setup) | —                             |
+| `JWT_TTL`      | Tempo de expiração do token (minutos)    | `60`                          |
 
 ## Testes
 
 ```bash
-# Rodar todos os testes
+# Todos os testes
 docker compose exec app php artisan test
 
-# Rodar testes de um módulo
+# Por módulo
 docker compose exec app php artisan test --group=auth
 docker compose exec app php artisan test --group=seller
 docker compose exec app php artisan test --group=sale
@@ -122,53 +471,71 @@ docker compose exec app php artisan test --group=sale
 ## Qualidade de Código
 
 ```bash
-# Formatar com Laravel Pint
+# Formatação (Laravel Pint — PSR-12 strict)
 docker compose exec app ./vendor/bin/pint
 
-# Análise estática com PHPStan (nível 5)
+# Análise estática (PHPStan nível 5 + Larastan)
 docker compose exec app ./vendor/bin/phpstan analyse
+
+# IDE helper (gera autocompletion para models e facades)
+docker compose exec app php artisan ide-helper:generate
+docker compose exec app php artisan ide-helper:models --write-mixin --no-interaction
 ```
 
 ## Arquitetura
 
+O projeto segue uma **arquitetura modular** onde cada domínio (Auth, Seller, Sale) é isolado em seu próprio módulo dentro de `app/Api/Modules/`. Cada módulo possui suas camadas:
+
 ```
 app/Api/Modules/
 ├── Auth/
-│   ├── Controllers/AuthController.php
-│   ├── Data/LoginData.php, RegisterData.php
-│   ├── UseCases/LoginUseCase.php, RegisterUseCase.php, LogoutUseCase.php, GetMeUseCase.php
-│   ├── Resources/AuthResource.php, UserResource.php
-│   └── Tests/
+│   ├── Controllers/        → Recebe a requisição HTTP e delega ao UseCase
+│   ├── Data/               → DTOs com validação (Spatie Laravel Data)
+│   ├── UseCases/           → Regra de negócio (uma ação por classe — SRP)
+│   ├── Resources/          → Formatação da resposta JSON
+│   └── Tests/              → Testes unitários e de integração
 ├── Seller/
-│   ├── Controllers/SellerController.php
-│   ├── Data/CreateSellerData.php, SellerQueryData.php
-│   ├── UseCases/CreateSellerUseCase.php, GetSellerUseCase.php, GetSellersUseCase.php, ResendCommissionUseCase.php
-│   ├── Repositories/SellerRepository.php
-│   ├── Resources/SellerResource.php
+│   ├── Controllers/
+│   ├── Data/
+│   ├── UseCases/
+│   ├── Repositories/       → Acesso a dados (abstração do Eloquent)
+│   ├── Resources/
 │   └── Tests/
 └── Sale/
-    ├── Controllers/SaleController.php
-    ├── Data/CreateSaleData.php, SaleQueryData.php
-    ├── UseCases/CreateSaleUseCase.php, GetSaleUseCase.php, GetSalesUseCase.php
-    ├── Repositories/SaleRepository.php
-    ├── Resources/SaleResource.php
-    ├── Jobs/SendDailySellerCommissionJob.php, SendDailyAdminSummaryJob.php
-    ├── Mail/DailySellerCommissionMail.php, DailyAdminSummaryMail.php
+    ├── Controllers/
+    ├── Data/
+    ├── UseCases/
+    ├── Repositories/
+    ├── Resources/
+    ├── Jobs/               → Jobs assíncronos para envio de e-mails
+    ├── Mail/               → Mailables com templates HTML
     └── Tests/
 ```
 
-Cada UseCase segue o **Single Responsibility Principle** — uma ação por classe.
+### Fluxo de uma requisição
+
+```
+Request → Controller → DTO (validação) → UseCase (regra de negócio) → Repository (dados) → Resource (resposta)
+```
 
 ## Estrutura Docker
 
 ```
 .docker/
-├── php/
-│   └── Dockerfile          # PHP 8.4-FPM com extensões
+├── php/Dockerfile          → PHP 8.5-FPM com extensões (pdo_mysql, redis, etc.)
 ├── nginx/
-│   ├── Dockerfile          # Nginx Alpine
-│   └── default.conf        # Config do virtual host
+│   ├── Dockerfile          → Nginx Alpine
+│   └── default.conf        → Virtual host apontando para public/
 └── mysql/
-    └── my.cnf              # Config customizada do MySQL
-docker-compose.yml          # Orquestração dos serviços
+    └── my.cnf              → Configuração customizada do MySQL
 ```
+
+| Container            | Descrição                                          |
+|----------------------|----------------------------------------------------|
+| `sales-api-app`      | PHP-FPM — executa a aplicação Laravel              |
+| `sales-api-nginx`    | Nginx — proxy reverso para o PHP-FPM               |
+| `sales-api-mysql`    | MySQL 9.x — banco de dados com health check        |
+| `sales-api-redis`    | Redis Alpine — cache e fila                        |
+| `sales-api-queue`    | Worker de fila — processa jobs (e-mails)           |
+| `sales-api-scheduler`| Scheduler — executa tarefas agendadas (23:59)      |
+| `sales-api-mailpit`  | Mailpit — captura e-mails em desenvolvimento       |
