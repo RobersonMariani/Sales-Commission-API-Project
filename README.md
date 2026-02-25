@@ -1,59 +1,174 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sales Commission API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API RESTful para gerenciamento de vendas e cálculo de comissões de vendedores, construída com Laravel 12.
 
-## About Laravel
+## Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **PHP 8.4+** / **Laravel 12**
+- **MySQL 9.x** — banco de dados
+- **Redis** — cache e filas
+- **Docker** — ambiente de desenvolvimento
+- **JWT** — autenticação via `php-open-source-saver/jwt-auth`
+- **Spatie Laravel Data** — DTOs com validação
+- **Mailpit** — servidor SMTP local para testes de email
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Setup com Docker
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```bash
+# Clonar o repositório
+git clone https://github.com/RobersonMariani/Sales-Commission-API-Project.git
+cd Sales-Commission-API-Project
 
-## Learning Laravel
+# Copiar o .env
+cp .env.example .env
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+# Subir os containers
+docker compose up -d
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# Instalar dependências
+docker compose exec app composer install
 
-## Laravel Sponsors
+# Gerar chaves
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan jwt:secret
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Rodar migrations e seeders
+docker compose exec app php artisan migrate --seed
+```
 
-### Premium Partners
+## Acesso
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+| Serviço  | URL                    |
+|----------|------------------------|
+| API      | http://localhost:8000  |
+| Mailpit  | http://localhost:8025  |
+| MySQL    | localhost:3306         |
+| Redis    | localhost:6379         |
 
-## Contributing
+## Dados do Seeder
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- **Admin:** admin@salescommission.com / password
+- **Vendedores:** 10 vendedores criados via factory
+- **Vendas:** ~50 vendas distribuídas nos últimos 30 dias
 
-## Code of Conduct
+## Endpoints
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Auth
 
-## Security Vulnerabilities
+| Método | Endpoint             | Descrição             | Auth |
+|--------|----------------------|-----------------------|------|
+| POST   | /api/auth/register   | Registrar usuário     | Não  |
+| POST   | /api/auth/login      | Login (retorna JWT)   | Não  |
+| POST   | /api/auth/logout     | Logout (invalida JWT) | Sim  |
+| GET    | /api/auth/me         | Usuário autenticado   | Sim  |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Sellers
 
-## License
+| Método | Endpoint                              | Descrição               | Auth |
+|--------|---------------------------------------|-------------------------|------|
+| POST   | /api/sellers                          | Criar vendedor          | Sim  |
+| GET    | /api/sellers                          | Listar vendedores       | Sim  |
+| GET    | /api/sellers/{id}                     | Buscar vendedor         | Sim  |
+| POST   | /api/sellers/{id}/resend-commission   | Reenviar email comissão | Sim  |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Sales
+
+| Método | Endpoint                 | Descrição             | Auth |
+|--------|--------------------------|-----------------------|------|
+| POST   | /api/sales               | Criar venda           | Sim  |
+| GET    | /api/sales               | Listar vendas         | Sim  |
+| GET    | /api/sales?seller_id=X   | Vendas por vendedor   | Sim  |
+| GET    | /api/sales/{id}          | Buscar venda          | Sim  |
+
+## Autenticação
+
+Usar o header `Authorization: Bearer {token}` em todas as requisições autenticadas.
+
+```bash
+# Login
+curl -X POST http://localhost:8000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "admin@salescommission.com", "password": "password"}'
+
+# Usar o token retornado
+curl http://localhost:8000/api/sellers \
+  -H "Authorization: Bearer {token}"
+```
+
+## Comissão
+
+A comissão é calculada automaticamente em **8.5%** sobre o valor da venda no momento do cadastro.
+
+## Emails
+
+- **Email diário para vendedores** — resumo de vendas, valor total e comissão do dia
+- **Email diário para admin** — soma de todas as vendas do dia
+- **Reenvio manual** — `POST /api/sellers/{id}/resend-commission` (aceita parâmetro `date` opcional)
+- Emails são processados via **fila Redis** e podem ser visualizados no **Mailpit** (http://localhost:8025)
+- O scheduler dispara os emails diários às 23:59
+
+## Testes
+
+```bash
+# Rodar todos os testes
+docker compose exec app php artisan test
+
+# Rodar testes de um módulo
+docker compose exec app php artisan test --group=auth
+docker compose exec app php artisan test --group=seller
+docker compose exec app php artisan test --group=sale
+```
+
+## Qualidade de Código
+
+```bash
+# Formatar com Laravel Pint
+docker compose exec app ./vendor/bin/pint
+
+# Análise estática com PHPStan (nível 5)
+docker compose exec app ./vendor/bin/phpstan analyse
+```
+
+## Arquitetura
+
+```
+app/Api/Modules/
+├── Auth/
+│   ├── Controllers/AuthController.php
+│   ├── Data/LoginData.php, RegisterData.php
+│   ├── UseCases/LoginUseCase.php, RegisterUseCase.php, LogoutUseCase.php, GetMeUseCase.php
+│   ├── Resources/AuthResource.php, UserResource.php
+│   └── Tests/
+├── Seller/
+│   ├── Controllers/SellerController.php
+│   ├── Data/CreateSellerData.php, SellerQueryData.php
+│   ├── UseCases/CreateSellerUseCase.php, GetSellerUseCase.php, GetSellersUseCase.php, ResendCommissionUseCase.php
+│   ├── Repositories/SellerRepository.php
+│   ├── Resources/SellerResource.php
+│   └── Tests/
+└── Sale/
+    ├── Controllers/SaleController.php
+    ├── Data/CreateSaleData.php, SaleQueryData.php
+    ├── UseCases/CreateSaleUseCase.php, GetSaleUseCase.php, GetSalesUseCase.php
+    ├── Repositories/SaleRepository.php
+    ├── Resources/SaleResource.php
+    ├── Jobs/SendDailySellerCommissionJob.php, SendDailyAdminSummaryJob.php
+    ├── Mail/DailySellerCommissionMail.php, DailyAdminSummaryMail.php
+    └── Tests/
+```
+
+Cada UseCase segue o **Single Responsibility Principle** — uma ação por classe.
+
+## Estrutura Docker
+
+```
+.docker/
+├── php/
+│   └── Dockerfile          # PHP 8.4-FPM com extensões
+├── nginx/
+│   ├── Dockerfile          # Nginx Alpine
+│   └── default.conf        # Config do virtual host
+└── mysql/
+    └── my.cnf              # Config customizada do MySQL
+docker-compose.yml          # Orquestração dos serviços
+```
