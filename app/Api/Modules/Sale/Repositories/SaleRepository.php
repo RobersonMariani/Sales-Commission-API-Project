@@ -34,14 +34,11 @@ class SaleRepository
      */
     public function getAllPaginated(SaleQueryData $query): LengthAwarePaginator
     {
-        $page = $query->page ?? 1;
-        $perPage = $query->perPage ?? 15;
-
         return Sale::query()
             ->with('seller:id,name,email')
             ->when($query->sellerId !== null, fn ($q) => $q->where('seller_id', $query->sellerId))
             ->orderBy('sale_date', 'desc')
             ->orderBy('id', 'desc')
-            ->paginate(perPage: $perPage, page: $page);
+            ->paginate(perPage: $query->perPage, page: $query->page);
     }
 }

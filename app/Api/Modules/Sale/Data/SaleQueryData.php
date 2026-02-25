@@ -18,8 +18,10 @@ class SaleQueryData extends Data
     public function __construct(
         public ?int $sellerId = null,
         public ?int $page = 1,
-        public ?int $perPage = 15,
-    ) {}
+        public ?int $perPage = null,
+    ) {
+        $this->perPage ??= (int) config('pagination.sales_per_page');
+    }
 
     /**
      * Define as regras de validação para os filtros de listagem de vendas.

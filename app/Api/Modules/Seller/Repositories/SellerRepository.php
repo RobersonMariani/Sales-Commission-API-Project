@@ -34,11 +34,8 @@ class SellerRepository
      */
     public function getAllPaginated(SellerQueryData $query): LengthAwarePaginator
     {
-        $page = $query->page ?? 1;
-        $perPage = $query->perPage ?? 15;
-
         return Seller::query()
             ->orderBy('id')
-            ->paginate(perPage: $perPage, page: $page);
+            ->paginate(perPage: $query->perPage, page: $query->page);
     }
 }

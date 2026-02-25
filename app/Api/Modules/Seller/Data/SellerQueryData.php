@@ -17,8 +17,10 @@ class SellerQueryData extends Data
 {
     public function __construct(
         public ?int $page = 1,
-        public ?int $perPage = 15,
-    ) {}
+        public ?int $perPage = null,
+    ) {
+        $this->perPage ??= (int) config('pagination.sellers_per_page');
+    }
 
     /**
      * Define as regras de validação para os filtros de listagem de vendedores.
