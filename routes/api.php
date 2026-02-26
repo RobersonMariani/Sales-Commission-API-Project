@@ -34,4 +34,5 @@ Route::prefix('sales')->middleware('auth:api')->group(function (): void {
 Route::prefix('reports')->middleware('auth:api')->group(function (): void {
     Route::get('/sales', [ReportController::class, 'salesSummary']);
     Route::get('/sales/by-seller', [ReportController::class, 'salesBySeller']);
+    Route::get('/sales/daily', [ReportController::class, 'dailySales']);
 });

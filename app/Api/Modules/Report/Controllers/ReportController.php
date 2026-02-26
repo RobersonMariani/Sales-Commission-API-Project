@@ -3,8 +3,10 @@
 namespace App\Api\Modules\Report\Controllers;
 
 use App\Api\Modules\Report\Data\SalesReportQueryData;
+use App\Api\Modules\Report\Resources\DailySalesReportResource;
 use App\Api\Modules\Report\Resources\SalesReportResource;
 use App\Api\Modules\Report\Resources\SellerSalesReportResource;
+use App\Api\Modules\Report\UseCases\GetDailySalesReportUseCase;
 use App\Api\Modules\Report\UseCases\GetSalesBySellerReportUseCase;
 use App\Api\Modules\Report\UseCases\GetSalesReportUseCase;
 use App\Http\Controllers\Controller;
@@ -34,5 +36,15 @@ class ReportController extends Controller
         $query = SalesReportQueryData::validateAndCreate($request->query());
 
         return SellerSalesReportResource::collection($useCase->execute($query));
+    }
+
+    /**
+     * Retorna o relatório de vendas agrupadas por dia.
+     */
+    public function dailySales(Request $request, GetDailySalesReportUseCase $useCase): AnonymousResourceCollection
+    {
+        $query = SalesReportQueryData::validateAndCreate($request->query());
+
+        return DailySalesReportResource::collection($useCase->execute($query));
     }
 }

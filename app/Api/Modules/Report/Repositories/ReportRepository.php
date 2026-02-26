@@ -3,6 +3,7 @@
 namespace App\Api\Modules\Report\Repositories;
 
 use App\Api\Modules\Report\Data\SalesReportQueryData;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use stdClass;
@@ -13,6 +14,8 @@ use stdClass;
 class ReportRepository
 {
     private const MAX_SELLERS_PER_REPORT = 50;
+
+    private const MAX_DAILY_DAYS = 30;
 
     /**
      * Retorna as métricas agregadas do relatório geral de vendas.
@@ -53,6 +56,31 @@ class ReportRepository
             ->groupBy('sellers.id', 'sellers.name', 'sellers.email')
             ->orderByDesc('total_value')
             ->limit(self::MAX_SELLERS_PER_REPORT)
+            ->get();
+    }
+
+    /**
+     * Retorna as métricas agregadas por dia.
+     */
+    public function getDailySales(SalesReportQueryData $query): Collection
+    {
+        $today = CarbonImmutable::today()->format('Y-m-d');
+        $startDate = $query->startDate ?? CarbonImmutable::today()->subDays(self::MAX_DAILY_DAYS)->format('Y-m-d');
+        $endDate = $query->endDate ?? $today;
+
+        return DB::table('sales')
+            ->where('sale_date', '>=', $startDate)
+            ->where('sale_date', '<=', $endDate)
+            ->when($query->sellerId !== null, fn ($q) => $q->where('seller_id', $query->sellerId))
+            ->selectRaw('
+                sale_date as date,
+                COUNT(*) as total_sales,
+                COALESCE(SUM(value), 0) as total_value,
+                COALESCE(SUM(commission), 0) as total_commission
+            ')
+            ->groupBy('sale_date')
+            ->orderBy('sale_date')
+            ->limit(self::MAX_DAILY_DAYS * 12)
             ->get();
     }
 }
