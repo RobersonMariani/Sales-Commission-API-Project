@@ -421,6 +421,96 @@ GET /api/sales/{id}
 
 ---
 
+### Relatórios
+
+#### Resumo geral de vendas
+
+```
+GET /api/reports/sales
+GET /api/reports/sales?start_date=2026-01-01&end_date=2026-02-28
+```
+
+| Parâmetro    | Tipo   | Padrão | Descrição          |
+|--------------|--------|--------|--------------------|
+| `start_date` | date   | —      | Início do período  |
+| `end_date`   | date   | —      | Fim do período     |
+
+**Resposta** `200`:
+
+```json
+{
+  "data": {
+    "total_sales": 55,
+    "total_value": 45230.00,
+    "total_commission": 3844.55,
+    "average_value": 822.36,
+    "average_commission": 69.90
+  }
+}
+```
+
+#### Vendas por vendedor
+
+```
+GET /api/reports/sales/by-seller
+GET /api/reports/sales/by-seller?start_date=2026-01-01&seller_id=1
+```
+
+| Parâmetro    | Tipo   | Padrão | Descrição                   |
+|--------------|--------|--------|-----------------------------|
+| `start_date` | date   | —      | Início do período           |
+| `end_date`   | date   | —      | Fim do período              |
+| `seller_id`  | int    | —      | Filtra por vendedor         |
+
+**Resposta** `200` (top 50, ordenado por valor total desc):
+
+```json
+{
+  "data": [
+    {
+      "seller_id": 1,
+      "seller_name": "Carlos Lima",
+      "seller_email": "carlos@email.com",
+      "total_sales": 8,
+      "total_value": 12500.00,
+      "total_commission": 1062.50
+    }
+  ]
+}
+```
+
+#### Vendas diárias
+
+```
+GET /api/reports/sales/daily
+GET /api/reports/sales/daily?start_date=2026-02-01&end_date=2026-02-28
+```
+
+| Parâmetro    | Tipo   | Padrão | Descrição                              |
+|--------------|--------|--------|----------------------------------------|
+| `start_date` | date   | —      | Início do período (padrão: -30 dias)   |
+| `end_date`   | date   | —      | Fim do período (padrão: hoje)          |
+| `seller_id`  | int    | —      | Filtra por vendedor                    |
+
+Sem filtros, retorna os últimos 30 dias.
+
+**Resposta** `200` (ordenado por data asc):
+
+```json
+{
+  "data": [
+    {
+      "date": "2026-02-20",
+      "total_sales": 5,
+      "total_value": 3200.00,
+      "total_commission": 272.00
+    }
+  ]
+}
+```
+
+---
+
 ## Comissão
 
 A comissão é calculada automaticamente no momento do cadastro da venda. A taxa é configurável por venda (padrão **8,5%**):
@@ -476,6 +566,7 @@ docker compose exec app php artisan test
 docker compose exec app php artisan test --group=auth
 docker compose exec app php artisan test --group=seller
 docker compose exec app php artisan test --group=sale
+docker compose exec app php artisan test app/Api/Modules/Report
 ```
 
 ## Qualidade de Código
@@ -511,14 +602,21 @@ app/Api/Modules/
 │   ├── Repositories/       → Acesso a dados (abstração do Eloquent)
 │   ├── Resources/
 │   └── Tests/
-└── Sale/
-    ├── Controllers/
-    ├── Data/
-    ├── UseCases/
-    ├── Repositories/
-    ├── Resources/
-    ├── Jobs/               → Jobs assíncronos para envio de e-mails
-    ├── Mail/               → Mailables com templates HTML
+├── Sale/
+│   ├── Controllers/
+│   ├── Data/
+│   ├── UseCases/
+│   ├── Repositories/
+│   ├── Resources/
+│   ├── Jobs/               → Jobs assíncronos para envio de e-mails
+│   ├── Mail/               → Mailables com templates HTML
+│   └── Tests/
+└── Report/
+    ├── Controllers/        → Endpoints de relatórios
+    ├── Data/               → DTOs de filtros (período, vendedor)
+    ├── UseCases/           → Resumo geral, por vendedor, vendas diárias
+    ├── Repositories/       → Queries de agregação (SUM, COUNT, GROUP BY)
+    ├── Resources/          → Formatação JSON dos relatórios
     └── Tests/
 ```
 
