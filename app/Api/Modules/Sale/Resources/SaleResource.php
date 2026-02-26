@@ -26,6 +26,7 @@ class SaleResource extends JsonResource
             'seller_id' => $this->seller_id,
             'value' => (float) $this->value,
             'commission' => (float) $this->commission,
+            'commission_rate' => (float) $this->commission_rate,
             'sale_date' => $this->sale_date->format('Y-m-d'),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),

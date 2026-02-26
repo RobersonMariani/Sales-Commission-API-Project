@@ -15,6 +15,7 @@ class SaleAssertableJson
             ->whereType('seller_id', 'integer')
             ->whereType('value', ['integer', 'double'])
             ->whereType('commission', ['integer', 'double'])
+            ->whereType('commission_rate', ['integer', 'double'])
             ->whereType('sale_date', 'string')
             ->whereType('created_at', ['string', 'null'])
             ->whereType('updated_at', ['string', 'null'])

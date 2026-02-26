@@ -43,6 +43,39 @@ class CreateSaleIntegrationTest extends TestCase
                         ->where('seller_id', $seller->id)
                         ->where('value', 100)
                         ->where('commission', 8.5)
+                        ->where('commission_rate', 8.5)
+                        ->where('sale_date', '2025-01-15')
+                        ->has('seller');
+                })->etc();
+            });
+    }
+
+    public function testShouldReturnCreatedWithCustomCommissionRateWhenProvided(): void
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $seller = Seller::factory()->create();
+        $token = auth('api')->login($user);
+        $payload = [
+            'seller_id' => $seller->id,
+            'value' => 200.00,
+            'sale_date' => '2025-01-15',
+            'commission_rate' => 10.00,
+        ];
+
+        // Act & Assert
+        $this
+            ->withHeader('Accept', 'application/json')
+            ->withHeader('Authorization', 'Bearer '.$token)
+            ->post(self::ENDPOINT, $payload)
+            ->assertCreated()
+            ->assertJson(function (AssertableJson $json) use ($seller) {
+                $json->has('data', function (AssertableJson $json) use ($seller) {
+                    SaleAssertableJson::schema($json)
+                        ->where('seller_id', $seller->id)
+                        ->where('value', 200)
+                        ->where('commission', 20)
+                        ->where('commission_rate', 10)
                         ->where('sale_date', '2025-01-15')
                         ->has('seller');
                 })->etc();

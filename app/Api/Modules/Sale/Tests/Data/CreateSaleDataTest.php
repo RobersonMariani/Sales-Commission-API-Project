@@ -32,6 +32,9 @@ class CreateSaleDataTest extends TestCase
             'all_required_fields' => [self::validPayload()],
             'value_min' => [array_merge(self::validPayload(), ['value' => 0.01])],
             'sale_date_valid' => [array_merge(self::validPayload(), ['sale_date' => '2024-12-31'])],
+            'commission_rate_custom' => [array_merge(self::validPayload(), ['commission_rate' => 10.00])],
+            'commission_rate_zero' => [array_merge(self::validPayload(), ['commission_rate' => 0])],
+            'commission_rate_max' => [array_merge(self::validPayload(), ['commission_rate' => 100])],
         ];
     }
 
@@ -47,6 +50,9 @@ class CreateSaleDataTest extends TestCase
             'sale_date_null' => [array_merge(self::validPayload(), ['sale_date' => null]), 'sale_date'],
             'sale_date_empty' => [array_merge(self::validPayload(), ['sale_date' => '']), 'sale_date'],
             'sale_date_invalid' => [array_merge(self::validPayload(), ['sale_date' => 'invalid']), 'sale_date'],
+            'commission_rate_negative' => [array_merge(self::validPayload(), ['commission_rate' => -1]), 'commission_rate'],
+            'commission_rate_above_max' => [array_merge(self::validPayload(), ['commission_rate' => 101]), 'commission_rate'],
+            'commission_rate_not_numeric' => [array_merge(self::validPayload(), ['commission_rate' => 'abc']), 'commission_rate'],
         ];
     }
 

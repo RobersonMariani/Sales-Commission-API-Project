@@ -27,6 +27,7 @@ class CreateSaleUseCaseTest extends TestCase
             'seller_id' => 1,
             'value' => 100.00,
             'commission' => 8.50,
+            'commission_rate' => 8.50,
             'sale_date' => '2025-01-15',
         ]);
 
@@ -39,6 +40,7 @@ class CreateSaleUseCaseTest extends TestCase
                         return $data['seller_id'] === 1
                             && $data['value'] === 100.00
                             && $data['commission'] === 8.50
+                            && $data['commission_rate'] === 8.50
                             && $data['sale_date'] === '2025-01-15';
                     }))
                     ->andReturn($expectedSale);
@@ -68,6 +70,7 @@ class CreateSaleUseCaseTest extends TestCase
             'seller_id' => 1,
             'value' => 1000.00,
             'commission' => 85.00,
+            'commission_rate' => 8.50,
             'sale_date' => '2025-01-15',
         ]);
 
@@ -94,5 +97,45 @@ class CreateSaleUseCaseTest extends TestCase
 
         // Assert
         $this->assertEquals(85.00, $result->commission);
+    }
+
+    public function testExecuteShouldCalculateCommissionWithCustomRateWhenProvided(): void
+    {
+        // Arrange
+        $data = new CreateSaleData(sellerId: 1, value: 1000.00, saleDate: '2025-01-15', commissionRate: 10.00);
+        $expectedSale = new Sale([
+            'id' => 1,
+            'seller_id' => 1,
+            'value' => 1000.00,
+            'commission' => 100.00,
+            'commission_rate' => 10.00,
+            'sale_date' => '2025-01-15',
+        ]);
+
+        $this->instance(
+            SaleRepository::class,
+            Mockery::mock(SaleRepository::class, function (MockInterface $mock) use ($expectedSale) {
+                $mock->shouldReceive('create')
+                    ->once()
+                    ->with(Mockery::on(function (array $data) {
+                        return $data['commission'] === 100.00
+                            && $data['commission_rate'] === 10.00;
+                    }))
+                    ->andReturn($expectedSale);
+            }),
+        );
+
+        DB::shouldReceive('transaction')
+            ->once()
+            ->with(Mockery::type(Closure::class))
+            ->andReturnUsing(fn ($callback) => $callback());
+
+        // Act
+        $useCase = app()->make(CreateSaleUseCase::class);
+        $result = $useCase->execute($data);
+
+        // Assert
+        $this->assertEquals(100.00, $result->commission);
+        $this->assertEquals(10.00, $result->commission_rate);
     }
 }

@@ -20,6 +20,7 @@ class CreateSaleData extends Data
         public int $sellerId,
         public float $value,
         public string $saleDate,
+        public float $commissionRate = 8.50,
     ) {}
 
     /**
@@ -31,6 +32,7 @@ class CreateSaleData extends Data
             'seller_id' => ['required', 'integer', Rule::exists('sellers', 'id')],
             'value' => ['required', 'numeric', 'min:0.01'],
             'sale_date' => ['required', 'date'],
+            'commission_rate' => ['sometimes', 'numeric', 'min:0', 'max:100'],
         ];
     }
 
@@ -43,6 +45,7 @@ class CreateSaleData extends Data
             'seller_id' => $this->sellerId,
             'value' => $this->value,
             'sale_date' => $this->saleDate,
+            'commission_rate' => $this->commissionRate,
         ];
     }
 }

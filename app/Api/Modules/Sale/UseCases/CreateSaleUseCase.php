@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\DB;
  */
 class CreateSaleUseCase
 {
-    /** Taxa de comissão aplicada sobre o valor da venda (8,5%). */
-    private const COMMISSION_RATE = 0.085;
-
     public function __construct(
         private readonly SaleRepository $repository,
     ) {}
@@ -27,7 +24,8 @@ class CreateSaleUseCase
     public function execute(CreateSaleData $data): Sale
     {
         return DB::transaction(function () use ($data) {
-            $commission = round($data->value * self::COMMISSION_RATE, 2);
+            $rate = $data->commissionRate / 100;
+            $commission = round($data->value * $rate, 2);
             $modelData = array_merge($data->toArrayModel(), ['commission' => $commission]);
 
             $sale = $this->repository->create($modelData);

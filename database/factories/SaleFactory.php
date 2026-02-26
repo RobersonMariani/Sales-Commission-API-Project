@@ -24,10 +24,13 @@ class SaleFactory extends Factory
     {
         $value = fake()->randomFloat(2, 10, 10000);
 
+        $commissionRate = 8.50;
+
         return [
             'seller_id' => Seller::factory(),
             'value' => $value,
-            'commission' => round($value * 0.085, 2),
+            'commission' => round($value * ($commissionRate / 100), 2),
+            'commission_rate' => $commissionRate,
             'sale_date' => fake()->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
         ];
     }

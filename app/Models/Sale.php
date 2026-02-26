@@ -22,12 +22,14 @@ class Sale extends Model
         'seller_id',
         'value',
         'commission',
+        'commission_rate',
         'sale_date',
     ];
 
     protected $casts = [
         'value' => 'decimal:2',
         'commission' => 'decimal:2',
+        'commission_rate' => 'decimal:2',
         'sale_date' => 'date',
     ];
 
