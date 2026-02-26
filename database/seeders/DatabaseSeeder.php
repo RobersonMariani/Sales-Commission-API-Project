@@ -20,11 +20,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@salescommission.com',
-            'password' => 'password',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@salescommission.com'],
+            [
+                'name' => 'Admin',
+                'password' => bcrypt('password'),
+            ],
+        );
 
         $this->call([
             SellerSeeder::class,
