@@ -6,7 +6,7 @@ API RESTful para gerenciamento de vendas e cálculo automático de comissões de
 
 - Autenticação JWT (registro, login, logout, perfil)
 - CRUD de vendedores
-- Cadastro e listagem de vendas com cálculo automático de comissão (8,5%)
+- Cadastro e listagem de vendas com cálculo automático de comissão (taxa configurável, padrão 8,5%)
 - Envio diário de e-mails com resumo de comissões para cada vendedor
 - Envio diário de e-mail administrativo com o resumo geral de vendas
 - Reenvio manual de e-mail de comissão para um vendedor específico
@@ -315,11 +315,12 @@ POST /api/sales
 {
   "seller_id": 1,
   "value": 1500.00,
-  "sale_date": "2026-02-24"
+  "sale_date": "2026-02-24",
+  "commission_rate": 8.50
 }
 ```
 
-A comissão de **8,5%** (R$ 127,50 neste exemplo) é calculada automaticamente.
+O campo `commission_rate` é opcional (padrão **8,5%**). A comissão (R$ 127,50 neste exemplo) é calculada automaticamente.
 
 **Resposta** `201`:
 
@@ -330,6 +331,7 @@ A comissão de **8,5%** (R$ 127,50 neste exemplo) é calculada automaticamente.
     "seller_id": 1,
     "value": 1500.00,
     "commission": 127.50,
+    "commission_rate": 8.50,
     "sale_date": "2026-02-24",
     "created_at": "2026-02-24T12:00:00+00:00",
     "updated_at": "2026-02-24T12:00:00+00:00",
@@ -348,6 +350,7 @@ A comissão de **8,5%** (R$ 127,50 neste exemplo) é calculada automaticamente.
 - `seller_id`: obrigatório, inteiro, deve existir na tabela `sellers`
 - `value`: obrigatório, numérico, mínimo 0.01
 - `sale_date`: obrigatório, formato de data válido
+- `commission_rate`: opcional, numérico, entre 0 e 100 (padrão 8.50)
 
 #### Listar vendas
 
@@ -374,6 +377,7 @@ Resultados ordenados por `sale_date` (mais recente primeiro).
       "seller_id": 1,
       "value": 1500.00,
       "commission": 127.50,
+      "commission_rate": 8.50,
       "sale_date": "2026-02-24",
       "created_at": "2026-02-24T12:00:00+00:00",
       "updated_at": "2026-02-24T12:00:00+00:00",
@@ -400,6 +404,7 @@ GET /api/sales/{id}
     "seller_id": 1,
     "value": 1500.00,
     "commission": 127.50,
+    "commission_rate": 8.50,
     "sale_date": "2026-02-24",
     "created_at": "2026-02-24T12:00:00+00:00",
     "updated_at": "2026-02-24T12:00:00+00:00",
@@ -418,11 +423,16 @@ GET /api/sales/{id}
 
 ## Comissão
 
-A comissão é calculada automaticamente no momento do cadastro da venda, aplicando a taxa fixa de **8,5%** sobre o valor da venda:
+A comissão é calculada automaticamente no momento do cadastro da venda. A taxa é configurável por venda (padrão **8,5%**):
 
 ```
-comissão = valor_da_venda × 0,085
+comissão = valor_da_venda × (commission_rate / 100)
 ```
+
+| Campo             | Tipo   | Padrão | Descrição                        |
+|-------------------|--------|--------|----------------------------------|
+| `commission_rate` | float  | 8.50   | Taxa de comissão em % (0 a 100)  |
+| `commission`      | float  | —      | Valor calculado automaticamente  |
 
 O valor é arredondado para 2 casas decimais e armazenado junto à venda.
 
